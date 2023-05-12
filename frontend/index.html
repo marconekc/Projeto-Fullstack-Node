@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#gggggg">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+
+    <link rel="stylesheet" href="./src/style.css">
+    <title>Lista de Jogos</title>
+</head>
+<body>
+    <div>
+    <div class="header">
+        <div class="header-element">
+          <a href="index.html" style="text-decoration: none; color:inherit;">LISTAR</a>
+        </div>
+        <div class="header-element">
+          <a href="./src/adicionar" style="text-decoration: none; color:inherit;">ADICIONAR</a>
+        </div>
+        <div class="header-element">
+          <a href="./src/editar;" style="text-decoration: none; color:inherit;">EDITAR</a>
+        </div>
+      </div>
+</div>
+<div class="game-list">
+<div id="game-list" >
+</div>
+</div>
+
+<p class="credit">Logo by: 
+  <a href="https://twitter.com/hiraefabio">@hiraefabio</a>
+</p>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+    console.log('Service Worker registrado com sucesso:', registration.scope);
+    }).catch(function(error) {
+    console.log('Falha ao registrar o Service Worker:', error);
+    });
+  }
+  
+  </script>
+
+  <script>
+    window.onload = function () {
+        fetch("http://127.0.0.1:3000/game/") 
+            .then(async (data) => {
+                const response = await data.json();
+                console.log({ response }) 
+                const list = document.getElementById("game-list");
+                response.games.forEach(games => {
+                    const gameCard = document.createElement("div")
+                    const gameList = document.createElement("div")
+                    const gameName = document.createElement("p")
+                    const gameImg = document.createElement("img");
+                    const clickable = document.createElement("a");
+                    
+                    const gameDesc = document.createElement("p")
+                    gameDesc.className = "desc";
+                    const gameYear = document.createElement("p")
+                    
+                    gameImg.src = games.img;
+                    gameName.append(games.name)
+                    gameDesc.append(games.description)
+                    gameYear.append(games.year)
+                    clickable.addEventListener("click", function(event) {
+                      event.preventDefault();
+                      // Your function code here
+                      const popUp = document.createElement("div");
+                    popUp.className = "popup";
+                    const closeButton = document.createElement("span");
+                    closeButton.className = "close-button";
+                    closeButton.textContent = "X";
+                    closeButton.addEventListener("click", function () {
+                      // Close the pop-up by removing it from the DOM
+                      document.body.removeChild(popUp);
+                    });
+                    popUp.appendChild(closeButton);
+                    const clonedGameImg = gameImg.cloneNode(true);
+                    const clonedGameName = gameName.cloneNode(true);
+                    const clonedGameYear = gameYear.cloneNode(true);
+                    const clonedGameDesc = gameDesc.cloneNode(true);
+
+          popUp.appendChild(clonedGameImg);
+          popUp.appendChild(clonedGameName);
+          popUp.appendChild(clonedGameYear);
+          popUp.appendChild(clonedGameDesc);
+
+                    // Append the pop-up to the body
+                    document.body.appendChild(popUp);
+                    });
+                    clickable.appendChild(gameName)
+                    clickable.appendChild(gameImg)
+                    gameList.appendChild(clickable)
+                   
+                   /* gameList.appendChild(gameDesc)
+                    gameList.appendChild(gameYear)*/
+
+                    gameCard.appendChild(gameList)
+
+                    //gameCard.style.backgroundImage = `url(${games.img})`;
+                    gameCard.className = "game-card"
+                    list.appendChild(gameCard)
+  });
+})
+}
+
+
+  </script>
+
+</body>
+</html>
